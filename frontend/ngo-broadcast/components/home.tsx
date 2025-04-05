@@ -23,60 +23,75 @@ export default function Character() {
     undefined,
   );
   const [customRequest, setCustomRequest] = useState<string>("");
-  const [generatedScript, setGeneratedScript] = useState<string>(""); // State for script
+  const [generatedScript, setGeneratedScript] = useState<string>("");
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(false); // 🔥 new loading state
 
-  
   const handleTopicChange = async (topic: string) => {
     setSelectedTopic(topic);
+    setLoading(true); // start loading
     if (topic) {
       try {
-        const response = await fetch("http://localhost:5000/generate-podcast", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ topic: topic, language: "Hindi", voice: "coral", temperature: 0.7 }),
-        });
+        const response = await fetch(
+          "http://localhost:3000/api/generate-podcast",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              topic: topic,
+              language: "Hindi",
+              voice: "coral",
+              temperature: 0.7,
+            }),
+          },
+        );
         const data = await response.json();
         if (data.status === "success") {
-          console.log("Server Response:", data);
           setGeneratedScript(data.script);
-          setAudioUrl(data.audio_url); // Set the audio URL from the server response
+          setAudioUrl(data.audio_url);
         } else {
-          console.error("Error generating podcast:", data.message);
           setGeneratedScript("Error generating script.");
         }
       } catch (error) {
         console.error("Error sending request:", error);
         setGeneratedScript("Failed to connect to server.");
+      } finally {
+        setLoading(false); // stop loading
       }
     }
   };
 
   const handleSendRequest = async () => {
     if (!customRequest) return;
+    setLoading(true); // start loading
     try {
-      const response = await fetch("http://localhost:5000/generate-podcast", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ custom_topic: customRequest, language: "Hindi", voice: "coral", temperature: 0.7}),
-      });
+      const response = await fetch(
+        "http://localhost:3000/api/generate-podcast",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            custom_topic: customRequest,
+            language: "Hindi",
+            voice: "coral",
+            temperature: 0.7,
+          }),
+        },
+      );
       const data = await response.json();
       if (data.status === "success") {
         setGeneratedScript(data.script);
-        setAudioUrl(data.audio_url); 
+        setAudioUrl(data.audio_url);
       } else {
-        console.error("Error generating podcast:", data.message);
         setGeneratedScript("Error generating script.");
       }
-      console.log("Server Response:", data);
     } catch (error) {
       console.error("Error sending request:", error);
       setGeneratedScript("Failed to connect to server.");
+    } finally {
+      setLoading(false); // stop loading
     }
   };
-
-
-
 
   return (
     <div className="p-4">
@@ -113,7 +128,19 @@ export default function Character() {
           >
             <LipSyncCharacter />
           </Suspense>
-          {generatedScript && (
+
+          {/* Spinner while loading */}
+          {loading && (
+            <div className="flex justify-center items-center mt-4">
+              <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-blue-500"></div>
+              <span className="ml-2 text-sm text-gray-600">
+                Generating script...
+              </span>
+            </div>
+          )}
+
+          {/* Render script only if not loading */}
+          {!loading && generatedScript && (
             <div className="mt-4 p-3 bg-gray-100 rounded-md text-black">
               {generatedScript}
             </div>
@@ -122,8 +149,8 @@ export default function Character() {
       </Card>
 
       <div className="mt-4">
-      <AudioUploader audioUrlFromServer={audioUrl} />
-    </div>
+        <AudioUploader audioUrlFromServer={audioUrl} />
+      </div>
 
       <div className="mt-4">
         <Input

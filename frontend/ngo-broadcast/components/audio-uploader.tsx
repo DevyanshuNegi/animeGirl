@@ -4,21 +4,27 @@ import { Button } from "@/components/ui/button";
 import { Play, Pause } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
-export default function AudioUploader({ audioUrlFromServer }: { audioUrlFromServer: string | null }): JSX.Element {
+export default function AudioUploader({
+  audioUrlFromServer,
+}: {
+  audioUrlFromServer: string | null;
+}): JSX.Element {
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const { toast } = useToast();
 
-    useEffect(() => {
-        if (audioUrlFromServer) {
-            setAudioUrl(audioUrlFromServer);
-            window.dispatchEvent(new CustomEvent("audioLoaded", { detail: { url: audioUrlFromServer } }));
-            toast({
-                title: "Audio loaded from server",
-                description: "Audio is ready for lip-sync",
-            });
-        }
-    }, [audioUrlFromServer, toast]);
+  useEffect(() => {
+    if (audioUrlFromServer) {
+      setAudioUrl(audioUrlFromServer);
+      window.dispatchEvent(
+        new CustomEvent("audioLoaded", { detail: { url: audioUrlFromServer } }),
+      );
+      toast({
+        title: "Audio loaded from server",
+        description: "Audio is ready for lip-sync",
+      });
+    }
+  }, [audioUrlFromServer, toast]);
 
   const togglePlayback = (): void => {
     const newPlayingState = !isPlaying;
@@ -34,12 +40,8 @@ export default function AudioUploader({ audioUrlFromServer }: { audioUrlFromServ
 
   return (
     <div className="space-y-4 mt-4">
-
       {audioUrl && (
         <div className="space-y-2">
-          <p className="text-sm text-muted-foreground truncate">
-            {audioUrl}
-          </p>
           <Button onClick={togglePlayback} variant="outline" className="w-full">
             {isPlaying ? (
               <>
