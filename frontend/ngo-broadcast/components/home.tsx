@@ -33,7 +33,7 @@ export default function Character() {
     if (topic) {
       try {
         const response = await fetch(
-          "http://localhost:3000/api/generate-podcast",
+          "https://anime-girl-pearl.vercel.app/api/generate-podcast",
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -66,7 +66,7 @@ export default function Character() {
     setLoading(true); // start loading
     try {
       const response = await fetch(
-        "http://localhost:3000/api/generate-podcast",
+        "https://anime-girl-pearl.vercel.app/api/generate-podcast",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
