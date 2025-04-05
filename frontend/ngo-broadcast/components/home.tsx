@@ -32,19 +32,16 @@ export default function Character() {
     setLoading(true); // start loading
     if (topic) {
       try {
-        const response = await fetch(
-          "https://anime-girl-pearl.vercel.app/api/generate-podcast",
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              topic: topic,
-              language: "Hindi",
-              voice: "coral",
-              temperature: 0.7,
-            }),
-          },
-        );
+        const response = await fetch("/api/generate-podcast", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            topic: topic,
+            language: "Hindi",
+            voice: "coral",
+            temperature: 0.7,
+          }),
+        });
         const data = await response.json();
         if (data.status === "success") {
           setGeneratedScript(data.script);
@@ -65,19 +62,16 @@ export default function Character() {
     if (!customRequest) return;
     setLoading(true); // start loading
     try {
-      const response = await fetch(
-        "https://anime-girl-pearl.vercel.app/api/generate-podcast",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            custom_topic: customRequest,
-            language: "Hindi",
-            voice: "coral",
-            temperature: 0.7,
-          }),
-        },
-      );
+      const response = await fetch("/api/generate-podcast", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          custom_topic: customRequest,
+          language: "Hindi",
+          voice: "coral",
+          temperature: 0.7,
+        }),
+      });
       const data = await response.json();
       if (data.status === "success") {
         setGeneratedScript(data.script);
