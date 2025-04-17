@@ -1,0 +1,27 @@
+import type { NextApiRequest, NextApiResponse } from 'next';
+import { TestResponse } from '@/types';
+
+export default function handler(
+  req: NextApiRequest,
+  res: NextApiResponse<TestResponse>
+) {
+  if (req.method !== 'GET') {
+    return res.status(405).json({
+      status: 'error',
+      message: 'Method not allowed',
+      gemini_key_set: false,
+      openai_key_set: false
+    });
+  }
+
+  // Check for environment variables
+  const geminiKeySet = !!process.env.GEMINI_API_KEY;
+  const openaiKeySet = !!process.env.OPENAI_API_KEY;
+
+  res.status(200).json({
+    status: 'success',
+    message: 'API is working',
+    gemini_key_set: geminiKeySet,
+    openai_key_set: openaiKeySet
+  });
+}
