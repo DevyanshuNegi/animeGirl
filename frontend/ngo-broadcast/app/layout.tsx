@@ -8,9 +8,9 @@ import { HomeIcon, MegaphoneIcon } from "@heroicons/react/24/outline";
 import Header from "@/components/header";
 
 export const metadata: Metadata = {
-  title: "NGO Broadcast",
+  title: "Do Sakhi",
   description:
-    "A platform for NGOs to broadcast their schemes and announcements",
+    "An application that tells social problems in the form of folk lores",
   generator: "v0.dev",
 };
 

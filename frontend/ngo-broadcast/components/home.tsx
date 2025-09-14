@@ -1,5 +1,5 @@
 "use client";
-import { useState, Suspense } from "react";
+import { useState, Suspense, useEffect } from "react"; // ✅ IMPORT useEffect
 import LipSyncCharacter from "@/components/lip-sync-character";
 import AudioUploader from "@/components/audio-uploader";
 import {
@@ -17,57 +17,64 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-
 export default function Character() {
+  const [selectedLanguage, setSelectedLanguage] = useState<string | undefined>(
+    undefined,
+  );
   const [selectedTopic, setSelectedTopic] = useState<string | undefined>(
     undefined,
   );
   const [customRequest, setCustomRequest] = useState<string>("");
   const [generatedScript, setGeneratedScript] = useState<string>("");
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
-  const [loading, setLoading] = useState<boolean>(false); // 🔥 new loading state
+  const [loading, setLoading] = useState<boolean>(false);
 
-  const handleTopicChange = async (topic: string) => {
-    setSelectedTopic(topic);
-    setLoading(true); // start loading
-    if (topic) {
-      try {
-        const response = await fetch("/api/generate-podcast", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            topic: topic,
-            language: "Hindi",
-            voice: "coral",
-            temperature: 0.7,
-          }),
-        });
-        const data = await response.json();
-        if (data.status === "success") {
-          setGeneratedScript(data.script);
-          setAudioUrl(data.audio_url);
-        } else {
-          setGeneratedScript("Error generating script.");
+  useEffect(() => {
+    const generateContent = async () => {
+      if (selectedTopic && selectedLanguage) {
+        setLoading(true);
+        setGeneratedScript(""); // Clear previous script
+        setAudioUrl(null); // Clear previous audio
+        try {
+          const response = await fetch("/api/generate-podcast", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              topic: selectedTopic,
+              language: selectedLanguage,
+              voice: "coral",
+              temperature: 0.7,
+            }),
+          });
+          const data = await response.json();
+          if (data.status === "success") {
+            setGeneratedScript(data.script);
+            setAudioUrl(data.audio_url);
+          } else {
+            setGeneratedScript("Error generating script.");
+          }
+        } catch (error) {
+          console.error("Error sending request:", error);
+          setGeneratedScript("Failed to connect to server.");
+        } finally {
+          setLoading(false);
         }
-      } catch (error) {
-        console.error("Error sending request:", error);
-        setGeneratedScript("Failed to connect to server.");
-      } finally {
-        setLoading(false); // stop loading
       }
-    }
-  };
+    };
+
+    generateContent();
+  }, [selectedTopic, selectedLanguage]);
 
   const handleSendRequest = async () => {
     if (!customRequest) return;
-    setLoading(true); // start loading
+    setLoading(true);
     try {
       const response = await fetch("/api/generate-podcast", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           custom_topic: customRequest,
-          language: "Hindi",
+          language: selectedLanguage || "English",
           voice: "coral",
           temperature: 0.7,
         }),
@@ -83,7 +90,7 @@ export default function Character() {
       console.error("Error sending request:", error);
       setGeneratedScript("Failed to connect to server.");
     } finally {
-      setLoading(false); // stop loading
+      setLoading(false);
     }
   };
 
@@ -94,8 +101,12 @@ export default function Character() {
           <CardDescription>Your Friendly Teacher</CardDescription>
         </CardHeader>
         <CardContent>
-          <Select value={selectedTopic} onValueChange={handleTopicChange}>
-            <SelectTrigger className="w-full">
+          {/* ✅ FIX: Use simple state setters for the handlers */}
+          <Select
+            value={selectedTopic}
+            onValueChange={(topic) => setSelectedTopic(topic)}
+          >
+            <SelectTrigger className="w-full mb-2">
               <SelectValue placeholder="Select a topic" />
             </SelectTrigger>
             <SelectContent>
@@ -112,6 +123,26 @@ export default function Character() {
               </SelectItem>
             </SelectContent>
           </Select>
+
+          <Select
+            value={selectedLanguage}
+            onValueChange={(language) => setSelectedLanguage(language)}
+          >
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Select a language" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="English">English</SelectItem>
+              <SelectItem value="Hindi">Hindi</SelectItem>
+              <SelectItem value="Punjabi">Punjabi</SelectItem>
+              <SelectItem value="Marathi">Marathi</SelectItem>
+              <SelectItem value="Bangali">Bangali</SelectItem>
+              <SelectItem value="Telugu">Telugu</SelectItem>
+              <SelectItem value="Tamil">Tamil</SelectItem>
+              <SelectItem value="Gujarati">Gujarati</SelectItem>
+            </SelectContent>
+          </Select>
+
           <br />
           <Suspense
             fallback={
