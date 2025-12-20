@@ -30,26 +30,29 @@ export default function RootLayout({
         >
           <AuthProvider>
             <Header />
-            {children}
+            <main className="pb-20">
+              {children}
+            </main>
 
-            <div className="fixed bottom-0 w-full bg-white shadow-md">
-              <nav className="flex justify-around py-2">
-                {/* Explore Button */}
+            {/* Bottom Navigation */}
+            <div className="fixed bottom-0 w-full glass border-t border-pink-200/50 dark:border-pink-800/30 z-50">
+              <nav className="flex justify-around py-3 max-w-md mx-auto">
+                {/* Home Button */}
                 <Link
                   href="/"
-                  className="flex flex-col items-center text-gray-700 hover:text-indigo-500"
+                  className="flex flex-col items-center gap-1 px-6 py-2 rounded-xl text-muted-foreground hover:text-pink-500 hover:bg-pink-50 dark:hover:bg-pink-950/50 transition-all group"
                 >
-                  <HomeIcon className="h-6 w-6" />
-                  <span className="text-xs">Home</span>
+                  <HomeIcon className="h-6 w-6 group-hover:scale-110 transition-transform" />
+                  <span className="text-xs font-medium">Home</span>
                 </Link>
 
-                {/* Notifications Button */}
+                {/* Broadcast Button */}
                 <Link
                   href="/broadcast"
-                  className="flex flex-col items-center text-gray-700 hover:text-indigo-500"
+                  className="flex flex-col items-center gap-1 px-6 py-2 rounded-xl text-muted-foreground hover:text-purple-500 hover:bg-purple-50 dark:hover:bg-purple-950/50 transition-all group"
                 >
-                  <MegaphoneIcon className="h-6 w-6" />
-                  <span className="text-xs">Broadcast</span>
+                  <MegaphoneIcon className="h-6 w-6 group-hover:scale-110 transition-transform" />
+                  <span className="text-xs font-medium">Broadcast</span>
                 </Link>
               </nav>
             </div>
@@ -59,5 +62,3 @@ export default function RootLayout({
     </html>
   );
 }
-
-import "./globals.css";
