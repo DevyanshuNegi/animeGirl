@@ -55,6 +55,30 @@ export default function RootLayout({
                   <span className="text-xs font-medium">Broadcast</span>
                 </Link>
               </nav>
+              
+              {/* Developer Credits */}
+              <div className="text-center py-2 border-t border-pink-200/30 dark:border-pink-800/20">
+                <p className="text-xs text-muted-foreground">
+                  Built with 💖 by{" "}
+                  <a 
+                    href="https://github.com/GTgyani206" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-pink-500 hover:text-pink-600 hover:underline transition-colors"
+                  >
+                    Gyanendra Thakur
+                  </a>
+                  {" & "}
+                  <a 
+                    href="https://github.com/DevyanshuNegi" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-purple-500 hover:text-purple-600 hover:underline transition-colors"
+                  >
+                    Devyanshu Negi
+                  </a>
+                </p>
+              </div>
             </div>
           </AuthProvider>
         </ThemeProvider>
